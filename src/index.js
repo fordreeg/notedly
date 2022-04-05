@@ -9,6 +9,8 @@ const DB_HOST = process.env.DB_HOST
 
 db.connect(DB_HOST)
 
+const models = require('./models')
+
 let notes = [
     { id: '1', content: 'This is a note', author: 'Adam Scott' },
     { id: '2', content: 'This is another note', author: 'Harlow Everly' },
