@@ -1,5 +1,5 @@
 const express = require('express')
-const { ApolloServer, gql } = require('apollo-server-express')
+const { ApolloServer } = require('apollo-server-express')
 
 require('dotenv').config()
 const db = require('./db')
@@ -10,26 +10,10 @@ const DB_HOST = process.env.DB_HOST
 db.connect(DB_HOST)
 
 const models = require('./models')
-
-const typeDefs = gql`
-    type Query {
-        hello: String
-        notes: [Note]!
-        note(id: ID!): Note!
-    },
-    type Note {
-        id: ID!
-        content: String!
-        author: String!
-    },
-    type Mutation {
-        newNote(content: String!, author: String!): Note!
-    }
-`
+const typeDefs = require('./schema')
 
 const resolvers = {
     Query: {
-        hello: () => 'Hello world!!',
         notes: async () => await models.Note.find(),
         note: async (parent, args) => await models.Note.findById(args.id),
     },
