@@ -11,12 +11,6 @@ db.connect(DB_HOST)
 
 const models = require('./models')
 
-let notes = [
-    { id: '1', content: 'This is a note', author: 'Adam Scott' },
-    { id: '2', content: 'This is another note', author: 'Harlow Everly' },
-    { id: '3', content: 'Oh hey look, another note!', author: 'Riley Harrison' }
-]
-
 const typeDefs = gql`
     type Query {
         hello: String
@@ -36,20 +30,15 @@ const typeDefs = gql`
 const resolvers = {
     Query: {
         hello: () => 'Hello world!!',
-        notes: () => notes,
-        note: (parent, args) => notes.find(note => note.id === args.id)
+        notes: async () => await models.Note.find(),
+        note: async (parent, args) => await models.Note.findById(args.id),
     },
     Mutation: {
-        newNote: (parent, args) => {
-            let newValue = {
-                id: String(notes.length + 1),
+        newNote: async (parent, args) => {
+            return await models.Note.create({
                 content: args.content,
                 author: args.author
-            }
-
-            notes.push(newValue)
-            console.log('notes :>> ', notes);
-            return newValue
+            })
         }
     }
 }
