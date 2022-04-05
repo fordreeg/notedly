@@ -4,4 +4,4 @@ const models = {
   Note
 }
 
-module.export = models
+module.exports = models
