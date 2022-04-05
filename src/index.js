@@ -11,33 +11,22 @@ db.connect(DB_HOST)
 
 const models = require('./models')
 const typeDefs = require('./schema')
-
-const resolvers = {
-    Query: {
-        notes: async () => await models.Note.find(),
-        note: async (parent, args) => await models.Note.findById(args.id),
-    },
-    Mutation: {
-        newNote: async (parent, args) => {
-            return await models.Note.create({
-                content: args.content,
-                author: args.author
-            })
-        }
-    }
-}
+const resolvers = require('./resolvers')
 
 async function startApolloServer(typeDefs, resolvers) {
-    const server = new ApolloServer({ typeDefs, resolvers })
-    const app = express()
-    await server.start()
-    server.applyMiddleware({ app, path: '/api' })
-    app.listen({ port }, () => console.log(`GraphQL Server running at http://localhost:${port}${server.graphqlPath}`))
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: () => ({ models }),
+  })
+  const app = express()
+  await server.start()
+  server.applyMiddleware({ app, path: '/api' })
+  app.listen({ port }, () =>
+    console.log(
+      `GraphQL Server running at http://localhost:${port}${server.graphqlPath}`
+    )
+  )
 }
 
-startApolloServer(typeDefs, resolvers);
-
-
-
-
-
+startApolloServer(typeDefs, resolvers)
